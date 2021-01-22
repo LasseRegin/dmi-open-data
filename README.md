@@ -6,6 +6,7 @@ Simple Python interface to the The Danish Meteorological Institute's (DMI) [Open
 ## Requirements
 
 * Python 3.6+
+* API Key from [DMI Open Data](https://confluence.govcloud.dk/pages/viewpage.action?pageId=26476690)
 
 ## Installation
 
@@ -47,6 +48,10 @@ observations = client.get_observations(
     limit=1000)
 
 ```
+
+## API Key
+
+API Key can be obtained for free at the [DMI Open Data](https://confluence.govcloud.dk/pages/viewpage.action?pageId=26476690).
 
 ## Tests
 
