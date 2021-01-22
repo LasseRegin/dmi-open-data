@@ -3,6 +3,8 @@
 
 Simple Python interface to the The Danish Meteorological Institute's (DMI) [Open Data API](https://confluence.govcloud.dk/display/FDAPI/Danish+Meteorological+Institute+-+Open+Data).
 
+Weather data from Denmark and Greenland are publicly available through DMI's Open Data API. Fetch raw weather observations from all available weather stations in Denmark and Greenland. Parameters available include _temperature_, _windspeed_, _humidity_, _pressure_, _precipitation__, and many more.
+
 ## Requirements
 
 * Python 3.6+
