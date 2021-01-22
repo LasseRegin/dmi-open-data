@@ -7,7 +7,11 @@ Simple Python interface to the The Danish Meteorological Institute's (DMI) [Open
 
 * Python 3.6+
 
-Install required packages `pip install -r requirements.txt`.
+## Installation
+
+```bash
+$ pip install dmi-open-data
+```
 
 ## Example
 
@@ -48,5 +52,5 @@ observations = client.get_observations(
 
 Run tests
 ```bash
-python -m unittest discover tests
+$ python -m unittest discover tests
 ```
