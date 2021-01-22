@@ -1,7 +1,7 @@
 
 # DMI Open Data API
 
-Simple interface to the The Danish Meteorological Institute's (DMI) [Open Data API](https://confluence.govcloud.dk/display/FDAPI/Danish+Meteorological+Institute+-+Open+Data).
+Simple Python interface to the The Danish Meteorological Institute's (DMI) [Open Data API](https://confluence.govcloud.dk/display/FDAPI/Danish+Meteorological+Institute+-+Open+Data).
 
 ## Requirements
 

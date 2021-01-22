@@ -18,7 +18,7 @@ setuptools.setup(
     version="0.0.1",
     author="Lasse Regin Nielsen",
     author_email="lasseregin@gmail.com",
-    description="Simple interface to the The Danish Meteorological Institute's (DMI) Open Data API.",
+    description="Simple Python interface to the The Danish Meteorological Institute's (DMI) Open Data API.",
     long_description=long_description,
     long_description_content_type="text/markdown",
     url="https://github.com/LasseRegin/dmi-open-data",
