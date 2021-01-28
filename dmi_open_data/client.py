@@ -108,7 +108,7 @@ class DMIOpenDataClient:
         ]
 
     @staticmethod
-    def get_parameter(parameter_id: int) -> Parameter:
+    def get_parameter(parameter_id: str) -> Parameter:
         """Get parameter enum from DMI parameter id.
 
         Args:
