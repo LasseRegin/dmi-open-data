@@ -120,6 +120,15 @@ class DMIOpenDataClient:
         return Parameter(parameter_id)
 
     def get_closest_station(self, latitude: float, longitude: float) -> List[Dict[str, Any]]:
+        """Get closest weather station from given coordinates.
+
+        Args:
+            latitude (float): Latitude coordinate.
+            longitude (float): Longitude coordinate.
+
+        Returns:
+            List[Dict[str, Any]]: Closest weather station.
+        """
         stations = self.get_stations()
         closest_station, closests_dist = None, 1e10
         for station in stations:
