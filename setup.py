@@ -15,7 +15,7 @@ with open(os.path.join(DIR, "requirements.txt"), "r") as f:
 
 setuptools.setup(
     name="dmi-open-data",
-    version="0.0.3",
+    version="0.0.4",
     author="Lasse Regin Nielsen",
     author_email="lasseregin@gmail.com",
     description="Simple Python interface to the The Danish Meteorological Institute's (DMI) Open Data API.",
