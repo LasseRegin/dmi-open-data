@@ -4,7 +4,7 @@ from typing import List, Dict, Optional, Any, Union
 import requests
 
 from dmi_open_data.enums import Parameter
-from dmi_open_data.utils import date2microseconds
+from dmi_open_data.utils import date2microseconds, distance
 
 
 class DMIOpenDataClient:
@@ -118,3 +118,24 @@ class DMIOpenDataClient:
             Parameter: Parameter enum object.
         """
         return Parameter(parameter_id)
+
+    def get_closest_station(self, latitude: float, longitude: float) -> List[Dict[str, Any]]:
+        stations = self.get_stations()
+        closest_station, closests_dist = None, 1e10
+        for station in stations:
+            location = station.get('location', {})
+            lat, lon = location.get('latitude'), location.get('longitude')
+            if lat is None or lon is None:
+                continue
+
+            # Calculate distance
+            dist = distance(
+                lat1=latitude,
+                lon1=longitude,
+                lat2=lat,
+                lon2=lon,
+            )
+
+            if dist < closests_dist:
+                closests_dist, closest_station = dist, station
+        return closest_station

@@ -82,6 +82,10 @@ class TestClient(unittest.TestCase):
         self.assertIsInstance(parameter, Parameter, 'Returned value was not a Parameter object.')
         self.assertEqual(parameter, Parameter.TempDry, 'Wrong parameter returned.')
 
+    def test_get_closest_station(self):
+        station = self.client.get_closest_station(latitude=55.707722, longitude=12.562119)
+        self.assertIsInstance(station, dict, 'Returned station was not a dict.')
+
 
 if __name__ == '__main__':
     unittest.main()

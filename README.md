@@ -38,6 +38,11 @@ dmi_station = next(
     for station in stations
     if station['name'].lower() == 'dmi')
 
+# Get closest station
+closest_station = client.get_closest_station(
+    latitude=55.707722,
+    longitude=12.562119)
+
 # Get available parameters
 parameters = client.list_parameters()
 
