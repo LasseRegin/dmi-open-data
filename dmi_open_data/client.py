@@ -2,6 +2,7 @@ from datetime import datetime
 from typing import List, Dict, Optional, Any, Union
 
 import requests
+from tenacity import retry, stop_after_attempt, wait_random
 
 from dmi_open_data.enums import Parameter
 from dmi_open_data.utils import date2microseconds, distance
@@ -21,6 +22,7 @@ class DMIOpenDataClient:
     def base_url(self):
         return f"{self._base_url}/{self.version}"
 
+    @retry(stop=stop_after_attempt(10), wait=wait_random(min=0.01, max=0.10))
     def _query(self, service: str, params: Dict[str, Any], **kwargs):
         res = requests.get(
             url=f"{self.base_url}/{service}",
