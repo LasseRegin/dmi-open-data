@@ -1,8 +1,6 @@
 import os
 import setuptools
 
-from dmi_open_data import __version__
-
 
 DIR = os.path.dirname(os.path.realpath(__file__))
 
@@ -17,7 +15,7 @@ with open(os.path.join(DIR, "requirements.txt"), "r") as f:
 
 setuptools.setup(
     name="dmi-open-data",
-    version=__version__,
+    version="0.0.8",
     author="Lasse Regin Nielsen",
     author_email="lasseregin@gmail.com",
     description="Simple Python interface to the The Danish Meteorological Institute's (DMI) Open Data API.",
