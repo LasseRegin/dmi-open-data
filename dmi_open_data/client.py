@@ -22,7 +22,7 @@ class DMIOpenDataClient:
     def base_url(self):
         return f"{self._base_url}/{self.version}"
 
-    @retry(stop=stop_after_attempt(10), wait=wait_random(min=0.01, max=0.10))
+    @retry(stop=stop_after_attempt(10), wait=wait_random(min=0.1, max=1.00))
     def _query(self, service: str, params: Dict[str, Any], **kwargs):
         res = requests.get(
             url=f"{self.base_url}/{service}",
