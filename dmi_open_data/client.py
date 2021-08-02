@@ -9,34 +9,38 @@ from dmi_open_data.utils import date2microseconds, distance
 
 
 class DMIOpenDataClient:
-    _base_url = 'https://dmigw.govcloud.dk/metObs'
+    _base_url = "https://dmigw.govcloud.dk/{version}/metObs"
 
-    def __init__(self, api_key: str, version: str = 'v1'):
+    def __init__(self, api_key: str, version: str = "v2"):
         if api_key is None:
             raise ValueError(f"Invalid value for `api_key`: {api_key}")
+        if version == "v1":
+            raise ValueError(f"DMI metObs v1 not longer supported")
+        if version not in ["v2"]:
+            raise ValueError(f"API version {version} not supported")
 
         self.api_key = api_key
         self.version = version
 
     @property
     def base_url(self):
-        return f"{self._base_url}/{self.version}"
+        return self._base_url.format(version=self.version)
 
     @retry(stop=stop_after_attempt(10), wait=wait_random(min=0.1, max=1.00))
     def _query(self, service: str, params: Dict[str, Any], **kwargs):
         res = requests.get(
             url=f"{self.base_url}/{service}",
             params={
-                'api-key': self.api_key,
+                "api-key": self.api_key,
                 **params,
             },
             **kwargs,
         )
         return res.json()
 
-    def get_stations(self,
-                     limit: Optional[int] = 10000,
-                     offset: Optional[int] = 0) -> List[Dict[str, Any]]:
+    def get_stations(
+        self, limit: Optional[int] = 10000, offset: Optional[int] = 0
+    ) -> List[Dict[str, Any]]:
         """Get DMI stations.
 
         Args:
@@ -48,20 +52,24 @@ class DMIOpenDataClient:
         Returns:
             List[Dict[str, Any]]: List of DMI stations.
         """
-        return self._query(
-            service='station',
+        res = self._query(
+            service="collections/station/items",
             params={
-                'limit': limit,
-                'offset': offset,
-            })
+                "limit": limit,
+                "offset": offset,
+            },
+        )
+        return res.get("features", [])
 
-    def get_observations(self,
-                         parameter: Optional[Parameter] = None,
-                         station_id: Optional[int] = None,
-                         from_time: Optional[datetime] = None,
-                         to_time: Optional[datetime] = None,
-                         limit: Optional[int] = 10000,
-                         offset: Optional[int] = 0) -> List[Dict[str, Any]]:
+    def get_observations(
+        self,
+        parameter: Optional[Parameter] = None,
+        station_id: Optional[int] = None,
+        from_time: Optional[datetime] = None,
+        to_time: Optional[datetime] = None,
+        limit: Optional[int] = 10000,
+        offset: Optional[int] = 0,
+    ) -> List[Dict[str, Any]]:
         """Get raw DMI observation.
 
         Args:
@@ -81,16 +89,19 @@ class DMIOpenDataClient:
         Returns:
             List[Dict[str, Any]]: List of raw DMI observations.
         """
-        return self._query(
-            service='observation',
+        res = self._query(
+            service="collections/observation/items",
             params={
-                'parameterId': None if parameter is None else parameter.value,
-                'stationId': station_id,
-                'from': None if from_time is None else date2microseconds(from_time),
-                'to': None if to_time is None else date2microseconds(to_time),
-                'limit': limit,
-                'offset': offset,
-            })
+                "parameterId": None if parameter is None else parameter.value,
+                "stationId": station_id,
+                "datetime": _construct_datetime_argument(
+                    from_time=from_time, to_time=to_time
+                ),
+                "limit": limit,
+                "offset": offset,
+            },
+        )
+        return res.get("features", [])
 
     def list_parameters(self) -> List[Dict[str, Union[str, Parameter]]]:
         """List available observation parameters.
@@ -102,9 +113,9 @@ class DMIOpenDataClient:
         """
         return [
             {
-                'name': parameter.name,
-                'value': parameter.value,
-                'enum': parameter,
+                "name": parameter.name,
+                "value": parameter.value,
+                "enum": parameter,
             }
             for parameter in Parameter
         ]
@@ -121,7 +132,9 @@ class DMIOpenDataClient:
         """
         return Parameter(parameter_id)
 
-    def get_closest_station(self, latitude: float, longitude: float) -> List[Dict[str, Any]]:
+    def get_closest_station(
+        self, latitude: float, longitude: float
+    ) -> List[Dict[str, Any]]:
         """Get closest weather station from given coordinates.
 
         Args:
@@ -134,8 +147,10 @@ class DMIOpenDataClient:
         stations = self.get_stations()
         closest_station, closests_dist = None, 1e10
         for station in stations:
-            location = station.get('location', {})
-            lat, lon = location.get('latitude'), location.get('longitude')
+            coordinates = station.get("geometry", {}).get("coordinates")
+            if coordinates is None or len(coordinates) < 2:
+                continue
+            lat, lon = coordinates[0], coordinates[1]
             if lat is None or lon is None:
                 continue
 
@@ -150,3 +165,15 @@ class DMIOpenDataClient:
             if dist < closests_dist:
                 closests_dist, closest_station = dist, station
         return closest_station
+
+
+def _construct_datetime_argument(
+    from_time: Optional[datetime] = None, to_time: Optional[datetime] = None
+) -> str:
+    if from_time is None and to_time is None:
+        return None
+    if from_time is not None and to_time is None:
+        return f"{from_time.isoformat()}Z"
+    if from_time is None and to_time is not None:
+        return f"{to_time.isoformat()}Z"
+    return f"{from_time.isoformat()}Z/{to_time.isoformat()}Z"

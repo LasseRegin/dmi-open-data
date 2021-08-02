@@ -15,10 +15,10 @@ with open(os.path.join(DIR, "requirements.txt"), "r") as f:
 
 setuptools.setup(
     name="dmi-open-data",
-    version="0.0.8",
+    version="0.1.0",
     author="Lasse Regin Nielsen",
     author_email="lasseregin@gmail.com",
-    description="Simple Python interface to the The Danish Meteorological Institute's (DMI) Open Data API.",
+    description="Simple Python interface to the The Danish Meteorological Institute's (DMI) Open Data API metObs v2.",
     long_description=long_description,
     long_description_content_type="text/markdown",
     url="https://github.com/LasseRegin/dmi-open-data",
@@ -30,9 +30,6 @@ setuptools.setup(
         "Operating System :: OS Independent",
     ],
     python_requires=">=3.6",
-    package_data={"": [
-        "LICENSE",
-        "requirements.txt"
-    ]},
+    package_data={"": ["LICENSE", "requirements.txt"]},
     include_package_data=True,
 )

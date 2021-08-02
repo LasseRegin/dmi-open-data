@@ -2,6 +2,7 @@
 /.vscode
 /.deploy
 /dist
+/example-payloads
 
 /venv
 

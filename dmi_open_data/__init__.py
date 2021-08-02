@@ -1,6 +1,6 @@
 """Simple Python interface to the The Danish Meteorological Institute's (DMI) Open Data API."""
 
-__version__ = "0.0.8"
+__version__ = "0.1.0"
 
 from dmi_open_data.client import DMIOpenDataClient
 from dmi_open_data.enums import Parameter

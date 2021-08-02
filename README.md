@@ -1,14 +1,13 @@
-
 # DMI Open Data API
 
-Simple Python interface to the The Danish Meteorological Institute's (DMI) [Open Data API](https://confluence.govcloud.dk/display/FDAPI/Danish+Meteorological+Institute+-+Open+Data).
+Simple Python interface to the The Danish Meteorological Institute's (DMI) v2 [Open Data API](https://confluence.govcloud.dk/display/FDAPI/Danish+Meteorological+Institute+-+Open+Data).
 
-Weather data from Denmark and Greenland are publicly available through DMI's Open Data API. Fetch raw weather observations from all available weather stations in Denmark and Greenland. Parameters available include _temperature_, _windspeed_, _humidity_, _pressure_, _precipitation__, and many more.
+Weather data from Denmark and Greenland are publicly available through DMI's Open Data API. Fetch raw weather observations from all available weather stations in Denmark and Greenland. Parameters available include _temperature_, _windspeed_, _humidity_, _pressure_, \_precipitation\_\_, and many more.
 
 ## Requirements
 
-* Python 3.6+
-* API Key from [DMI Open Data](https://confluence.govcloud.dk/pages/viewpage.action?pageId=26476690)
+- Python 3.6+
+- API Key for **metObs v2** from [DMI Open Data](https://confluence.govcloud.dk/pages/viewpage.action?pageId=26476690)
 
 ## Installation
 
@@ -36,7 +35,7 @@ stations = client.get_stations()
 dmi_station = next(
     station
     for station in stations
-    if station['name'].lower() == 'dmi')
+    if station['properties']['name'].lower() == 'dmi')
 
 # Get closest station
 closest_station = client.get_closest_station(
@@ -49,9 +48,9 @@ parameters = client.list_parameters()
 # Get temperature observations from DMI station in given time period
 observations = client.get_observations(
     parameter=Parameter.TempDry,
-    station_id=dmi_station['stationId'],
-    from_time=datetime(2020, 12, 20),
-    to_time=datetime(2020, 12, 24),
+    station_id=dmi_station['properties']['stationId'],
+    from_time=datetime(2021, 7, 20),
+    to_time=datetime(2021, 7, 24),
     limit=1000)
 
 ```
@@ -63,6 +62,7 @@ API Key can be obtained for free at the [DMI Open Data](https://confluence.govcl
 ## Tests
 
 Run tests
+
 ```bash
 $ python -m unittest discover tests
 ```
