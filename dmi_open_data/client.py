@@ -150,7 +150,7 @@ class DMIOpenDataClient:
             coordinates = station.get("geometry", {}).get("coordinates")
             if coordinates is None or len(coordinates) < 2:
                 continue
-            lat, lon = coordinates[0], coordinates[1]
+            lat, lon = coordinates[1], coordinates[0]
             if lat is None or lon is None:
                 continue
 
