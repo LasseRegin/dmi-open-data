@@ -4,12 +4,12 @@ from typing import List, Dict, Optional, Any, Union
 import requests
 from tenacity import retry, stop_after_attempt, wait_random
 
-from dmi_open_data.enums import Parameter
-from dmi_open_data.utils import date2microseconds, distance
+from dmi_open_data.enums import Parameter, ClimateDataParameter
+from dmi_open_data.utils import distance
 
 
 class DMIOpenDataClient:
-    _base_url = "https://dmigw.govcloud.dk/{version}/metObs"
+    _base_url = "https://dmigw.govcloud.dk/{version}/{api}"
 
     def __init__(self, api_key: str, version: str = "v2"):
         if api_key is None:
@@ -22,20 +22,28 @@ class DMIOpenDataClient:
         self.api_key = api_key
         self.version = version
 
-    @property
-    def base_url(self):
-        return self._base_url.format(version=self.version)
+    def base_url(self, api: str):
+        if api not in ("climateData", "metObs"):
+            raise NotImplementedError(f"Following api is not supported yet: {api}")
+        return self._base_url.format(version=self.version, api=api)
 
     @retry(stop=stop_after_attempt(10), wait=wait_random(min=0.1, max=1.00))
-    def _query(self, service: str, params: Dict[str, Any], **kwargs):
+    def _query(self, api: str, service: str, params: Dict[str, Any], **kwargs):
         res = requests.get(
-            url=f"{self.base_url}/{service}",
+            url=f"{self.base_url(api=api)}/{service}",
             params={
                 "api-key": self.api_key,
                 **params,
             },
             **kwargs,
         )
+        data = res.json()
+        http_status_code = data.get("http_status_code", 200)
+        if http_status_code != 200:
+            message = data.get("message")
+            raise ValueError(
+                f"Failed HTTP request with HTTP status code {http_status_code} and message: {message}"
+            )
         return res.json()
 
     def get_stations(
@@ -53,6 +61,7 @@ class DMIOpenDataClient:
             List[Dict[str, Any]]: List of DMI stations.
         """
         res = self._query(
+            api="metObs",
             service="collections/station/items",
             params={
                 "limit": limit,
@@ -90,6 +99,7 @@ class DMIOpenDataClient:
             List[Dict[str, Any]]: List of raw DMI observations.
         """
         res = self._query(
+            api="metObs",
             service="collections/observation/items",
             params={
                 "parameterId": None if parameter is None else parameter.value,
@@ -97,6 +107,53 @@ class DMIOpenDataClient:
                 "datetime": _construct_datetime_argument(
                     from_time=from_time, to_time=to_time
                 ),
+                "limit": limit,
+                "offset": offset,
+            },
+        )
+        return res.get("features", [])
+
+    def get_climate_data(
+        self,
+        parameter: Optional[ClimateDataParameter] = None,
+        station_id: Optional[int] = None,
+        from_time: Optional[datetime] = None,
+        to_time: Optional[datetime] = None,
+        time_resolution: Optional[str] = None,
+        limit: Optional[int] = 10000,
+        offset: Optional[int] = 0,
+    ) -> List[Dict[str, Any]]:
+        """Get raw DMI climate data.
+
+        Args:
+            parameter_id (Optional[ClimateDataParameter], optional): Returns observations for a specific parameter.
+                Defaults to None.
+            station_id (Optional[int], optional): Search for a specific station using the stationID.
+                Defaults to None.
+            from_time (Optional[datetime], optional): Returns only objects with a "timeObserved" equal
+                to or after a given timestamp. Defaults to None.
+            to_time (Optional[datetime], optional): Returns only objects with a "timeObserved" before
+                (not including) a given timestamp. Defaults to None.
+            time_resolution (Optional[str], optional): Filter by time resolution (hour/day/month/year),
+                ie. what type of time interval the station value represents
+            limit (Optional[int], optional): Specify a maximum number of observations
+                you want to be returned. Defaults to 10000.
+            offset (Optional[int], optional): Specify the number of observations that should be skipped
+                before returning matching objects. Defaults to 0.
+
+        Returns:
+            List[Dict[str, Any]]: List of raw DMI observations.
+        """
+        res = self._query(
+            api="climateData",
+            service="collections/stationValue/items",
+            params={
+                "parameterId": None if parameter is None else parameter.value,
+                "stationId": station_id,
+                "datetime": _construct_datetime_argument(
+                    from_time=from_time, to_time=to_time
+                ),
+                "timeResolution": time_resolution,
                 "limit": limit,
                 "offset": offset,
             },
