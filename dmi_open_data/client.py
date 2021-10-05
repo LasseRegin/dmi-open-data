@@ -11,15 +11,18 @@ from dmi_open_data.utils import distance
 class DMIOpenDataClient:
     _base_url = "https://dmigw.govcloud.dk/{version}/{api}"
 
-    def __init__(self, api_key: str, version: str = "v2"):
+    def __init__(self, api_key: str, api_name:str = "metObs", version: str = "v2"):
         if api_key is None:
             raise ValueError(f"Invalid value for `api_key`: {api_key}")
+        if api_name not in ("climateData", "metObs"):
+            raise NotImplementedError(f"Following api is not supported yet: {api_name}")
         if version == "v1":
             raise ValueError(f"DMI metObs v1 not longer supported")
         if version not in ["v2"]:
             raise ValueError(f"API version {version} not supported")
 
         self.api_key = api_key
+        self.api_name = api_name
         self.version = version
 
     def base_url(self, api: str):
@@ -47,8 +50,7 @@ class DMIOpenDataClient:
         return res.json()
 
     def get_stations(
-            self, limit: Optional[int] = 10000, offset: Optional[int] = 0,
-            api: str = "metObs"
+            self, limit: Optional[int] = 10000, offset: Optional[int] = 0
     ) -> List[Dict[str, Any]]:
         """Get DMI stations.
 
@@ -62,7 +64,7 @@ class DMIOpenDataClient:
             List[Dict[str, Any]]: List of DMI stations.
         """
         res = self._query(
-            api=api,
+            api=self.api_name,
             service="collections/station/items",
             params={
                 "limit": limit,
