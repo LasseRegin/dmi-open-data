@@ -193,7 +193,8 @@ class DMIOpenDataClient:
         return Parameter(parameter_id)
 
     def get_closest_station(
-        self, latitude: float, longitude: float
+            self, latitude: float, longitude: float,
+            pars = []
     ) -> List[Dict[str, Any]]:
         """Get closest weather station from given coordinates.
 
@@ -206,6 +207,7 @@ class DMIOpenDataClient:
         """
         stations = self.get_stations()
         closest_station, closests_dist = None, 1e10
+        want_pars = set (pars)
         for station in stations:
             coordinates = station.get("geometry", {}).get("coordinates")
             if coordinates is None or len(coordinates) < 2:
@@ -214,6 +216,10 @@ class DMIOpenDataClient:
             if lat is None or lon is None:
                 continue
 
+            has_pars = set (station['properties']['parameterId'])
+            if (not want_pars.issubset (has_pars)):
+                continue
+            
             # Calculate distance
             dist = distance(
                 lat1=latitude,
