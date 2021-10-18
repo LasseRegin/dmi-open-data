@@ -50,7 +50,7 @@ class DMIOpenDataClient:
         return res.json()
 
     def get_stations(
-            self, limit: Optional[int] = 10000, offset: Optional[int] = 0
+        self, limit: Optional[int] = 10000, offset: Optional[int] = 0
     ) -> List[Dict[str, Any]]:
         """Get DMI stations.
 
