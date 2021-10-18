@@ -217,7 +217,7 @@ class DMIOpenDataClient:
                 continue
 
             has_pars = set (station['properties']['parameterId'])
-            if (not want_pars.issubset (has_pars)):
+            if (not want_pars.issubset(has_pars)):
                 continue
             
             # Calculate distance
