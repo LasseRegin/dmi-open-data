@@ -207,7 +207,7 @@ class DMIOpenDataClient:
         """
         stations = self.get_stations()
         closest_station, closests_dist = None, 1e10
-        want_pars = set (pars)
+        want_pars = set(pars)
         for station in stations:
             coordinates = station.get("geometry", {}).get("coordinates")
             if coordinates is None or len(coordinates) < 2:
