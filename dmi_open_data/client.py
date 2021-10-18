@@ -216,7 +216,7 @@ class DMIOpenDataClient:
             if lat is None or lon is None:
                 continue
 
-            has_pars = set (station['properties']['parameterId'])
+            has_pars = set(station["properties"]["parameterId"])
             if (not want_pars.issubset(has_pars)):
                 continue
             
