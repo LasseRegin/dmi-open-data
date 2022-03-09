@@ -85,6 +85,7 @@ class ClimateDataParameter(Enum):
     MaxPressure = "max_pressure"
     MinPressure = "min_pressure"
     BrightSunshine = "bright_sunshine"
+    MeanRadiation = "mean_radiation"
     AccPrecip = "acc_precip"
     MaxPrecip_24h = "max_precip_24h"
     AccPrecipPast12h = "acc_precip_past12h"

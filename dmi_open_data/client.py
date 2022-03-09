@@ -11,15 +11,18 @@ from dmi_open_data.utils import distance
 class DMIOpenDataClient:
     _base_url = "https://dmigw.govcloud.dk/{version}/{api}"
 
-    def __init__(self, api_key: str, version: str = "v2"):
+    def __init__(self, api_key: str, api_name:str = "metObs", version: str = "v2"):
         if api_key is None:
             raise ValueError(f"Invalid value for `api_key`: {api_key}")
+        if api_name not in ("climateData", "metObs"):
+            raise NotImplementedError(f"Following api is not supported yet: {api_name}")
         if version == "v1":
             raise ValueError(f"DMI metObs v1 not longer supported")
         if version not in ["v2"]:
             raise ValueError(f"API version {version} not supported")
 
         self.api_key = api_key
+        self.api_name = api_name
         self.version = version
 
     def base_url(self, api: str):
@@ -61,7 +64,7 @@ class DMIOpenDataClient:
             List[Dict[str, Any]]: List of DMI stations.
         """
         res = self._query(
-            api="metObs",
+            api=self.api_name,
             service="collections/station/items",
             params={
                 "limit": limit,
@@ -190,7 +193,8 @@ class DMIOpenDataClient:
         return Parameter(parameter_id)
 
     def get_closest_station(
-        self, latitude: float, longitude: float
+        self, latitude: float, longitude: float,
+        pars: List[str] = []
     ) -> List[Dict[str, Any]]:
         """Get closest weather station from given coordinates.
 
@@ -203,6 +207,7 @@ class DMIOpenDataClient:
         """
         stations = self.get_stations()
         closest_station, closests_dist = None, 1e10
+        want_pars = set(pars)
         for station in stations:
             coordinates = station.get("geometry", {}).get("coordinates")
             if coordinates is None or len(coordinates) < 2:
@@ -211,6 +216,10 @@ class DMIOpenDataClient:
             if lat is None or lon is None:
                 continue
 
+            has_pars = set(station["properties"]["parameterId"])
+            if (not want_pars.issubset(has_pars)):
+                continue
+            
             # Calculate distance
             dist = distance(
                 lat1=latitude,
