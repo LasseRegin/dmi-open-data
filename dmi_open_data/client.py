@@ -182,7 +182,7 @@ class DMIOpenDataClient:
         """Get parameter enum from DMI parameter id.
 
         Args:
-            parameter_id (int): Parameter id found on DMI API documentation.
+            parameter_id (str): Parameter id found on DMI API documentation.
 
         Returns:
             Parameter: Parameter enum object.
