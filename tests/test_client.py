@@ -8,7 +8,7 @@ from dmi_open_data import DMIOpenDataClient, Parameter, microseconds2date
 class TestClient(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
-        cls.client = DMIOpenDataClient(api_key=os.getenv("DMI_API_KEY"))
+        cls.client = DMIOpenDataClient()
 
     def test_stations(self):
         stations = self.client.get_stations()

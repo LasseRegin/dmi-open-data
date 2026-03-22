@@ -13,17 +13,14 @@ from dmi_open_data.utils import distance
 
 
 class DMIOpenDataClient:
-    _base_url = "https://dmigw.govcloud.dk/{version}/{api}"
+    _base_url = "https://opendataapi.dmi.dk/{version}/{api}"
 
-    def __init__(self, api_key: str, version: str = "v2"):
-        if api_key is None:
-            raise ValueError(f"Invalid value for `api_key`: {api_key}")
+    def __init__(self, version: str = "v2"):
         if version == "v1":
             raise ValueError(f"DMI metObs v1 not longer supported")
         if version not in ["v2"]:
             raise ValueError(f"API version {version} not supported")
 
-        self.api_key = api_key
         self.version = version
 
     def base_url(self, api: str):
@@ -36,7 +33,6 @@ class DMIOpenDataClient:
         res = requests.get(
             url=f"{self.base_url(api=api)}/{service}",
             params={
-                "api-key": self.api_key,
                 **params,
             },
             **kwargs,

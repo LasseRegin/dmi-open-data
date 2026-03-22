@@ -8,12 +8,12 @@ from dmi_open_data import DMIOpenDataClient, ClimateDataParameter
 class TestClient(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
-        cls.client = DMIOpenDataClient(api_key=os.getenv("DMI_CLIMATE_DATA_API_KEY"))
+        cls.client = DMIOpenDataClient()
 
     def test_observations(self):
         climate_data = self.client.get_climate_data(
             parameter=ClimateDataParameter.MeanTemp,
-            station_id="06184",
+            station_id="06180",
             from_time=datetime(2021, 7, 20),
             to_time=datetime(2021, 7, 24),
             time_resolution="day",

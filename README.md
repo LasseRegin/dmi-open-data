@@ -27,7 +27,7 @@ from dmi_open_data import DMIOpenDataClient, Parameter, ClimateDataParameter, Oc
 
 
 # Get 10 stations
-client = DMIOpenDataClient(api_key=os.getenv('DMI_API_KEY'))
+client = DMIOpenDataClient()
 stations = client.get_stations(limit=10)
 
 # Get all stations
@@ -56,7 +56,7 @@ observations = client.get_observations(
     limit=1000)
 
 # Init climate data client
-climate_data_client = DMIOpenDataClient(api_key=os.getenv('DMI_CLIMATE_DATA_API_KEY'))
+climate_data_client = DMIOpenDataClient()
 
 # Get climate data
 climate_data = climate_data_client.get_climate_data(
@@ -68,7 +68,7 @@ climate_data = climate_data_client.get_climate_data(
     limit=1000)
 
 # Init oceanographic data client
-ocean_data_client = DMIOpenDataClient(api_key=os.getenv('DMI_OCEAN_DATA_API_KEY'))
+ocean_data_client = DMIOpenDataClient()
 
 # Get oceanographic data
 ocean_data = ocean_data_client.get_ocean_data(
@@ -78,10 +78,6 @@ ocean_data = ocean_data_client.get_ocean_data(
     to_time=datetime(2025, 9, 10),
     limit=1000)
 ```
-
-## API Key
-
-API Key can be obtained for free at the [DMI Open Data](https://confluence.govcloud.dk/pages/viewpage.action?pageId=26476690).
 
 ## Tests
 
